@@ -61,7 +61,7 @@ def convert(x):
     return int(new)
 
 # re-loading data in 
-university_df = pd.read_csv("C:/Users/sjjby/Documents/Applied Data Science 1/Assignment 1/disciplines.csv",
+university_df = pd.read_csv("https://raw.githubusercontent.com/sarahjaynebyrne/ADS1_assignment1/code/female%20and%20male.csv?token=AWICDHXPZZXOALPG45MPLKLBSZTPI",
                             converters = {'England': convert,
                                           'Scotland': convert,
                                           'Wales': convert,
