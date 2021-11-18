@@ -1,6 +1,6 @@
 ### ASSIGNMENT 1 ###
 
-# importing libraries
+# importing required libraries for assignment
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -8,7 +8,9 @@ import matplotlib.pyplot as plt
 # loading the dataset
 university_df = pd.read_csv("https://raw.githubusercontent.com/sarahjaynebyrne/ADS1_assignment1/code/disciplines.csv?token=AWICDHVSEI7QDJ7YXC7QSH3BSZTAO")
 
-## DATA PRE-PROCESSING 
+---------------------------------------------------
+DATA PRE-PROCESSING 
+---------------------------------------------------
 
 def pre_processing(x):
     '''
@@ -43,6 +45,7 @@ print(pre_processing(university_df))
 All the data columns are objects. 
 However, the columns contain numerical values and thus, 
 these need changing to int data type values.
+In order to perform .sum() and .count() on them.
 The values contain commas ',' and these need to be removed also.
 '''
 
@@ -60,7 +63,7 @@ def convert(x):
     new = x.replace(",", "")
     return int(new)
 
-# re-loading data in 
+# re-loading data in with necessary convertions 
 university_df = pd.read_csv("C:/Users/sjjby/Documents/Applied Data Science 1/Assignment 1/disciplines.csv",
                             converters = {'England': convert,
                                           'Scotland': convert,
@@ -73,10 +76,10 @@ university_df = pd.read_csv("C:/Users/sjjby/Documents/Applied Data Science 1/Ass
                                           'Non-European Union': convert,
                                           'Total': convert})
 
-# checking the data types had changed
+# checking the data types had changed - they had
 print(university_df.dtypes)
 
-## adding columns from another data set
+# adding columns from another data set - to perform more stats
 gender_df = pd.read_csv("C:/Users/sjjby/Documents/Applied Data Science 1/Assignment 1/female and male.csv")
 
 # running pre-processing function on data
@@ -94,14 +97,18 @@ university_df['Male'] = pd.Series(gender_df['Male'])
 university_df['Other'] = pd.Series(gender_df['Other'])
 
 
+------------------------------------------------------------------------------------------------------------------------------------
+DATA VISUALISATION
+------------------------------------------------------------------------------------------------------------------------------
 
-########### DATA VISUALISATION ###
+# INVESTIGATING PLACE OF ORIGIN AND STEM/ NON-STEM ###
 
-### INVESTIGATING PLACE OF ORIGIN AND STEM/ NON-STEM ###
+# PYRAMID PLOT - FIGURE 1
 
-## PYRAMID PLOT - FIGURE 1
-
-#copy original dataframe
+'''
+copy original dataframe to ensure
+the original dataframe is not messed up.
+'''
 
 university_dfa = university_df.copy()
 
@@ -114,20 +121,20 @@ university_dfa.drop(columns = ['Subject of study',
                                'Other'],
                     inplace = True)
 
-#define x and y limits
+# define x and y limits
 y = list(university_dfa.columns.values.tolist())
 x_stem = university_dfa.iloc[13]
 x_nonstem = university_dfa.iloc[25]
 
-#define plot parameters
+# define plot parameters
 fig, axs = plt.subplots(ncols = 2, 
                          sharey = True, 
                          figsize = (9, 6))
 
-#specify background color and plot title
+# specify background color and plot title
 fig.patch.set_facecolor('xkcd:light grey')
 
-#define stem and non-stem bars
+# define stem and non-stem bars
 axs[0].barh(y, 
              x_stem, 
              align = 'center', 
@@ -139,17 +146,15 @@ axs[1].barh(y,
              color = 'cornflowerblue')
 axs[1].set(title = 'Non-STEM')
 
-#adjust grid parameters and specify labels for y-axis
+# adjust grid parameters and specify labels for y-axis
 axs[1].grid()
 axs[0].invert_xaxis()
 axs[0].grid()
 
-#display plot
+# display plot
 plt.show()
 
-## MAPPING - FIGURE 2
-
-    # showing subplots of 
+# MAPPING - FIGURE 2 
 
 # importing UK image
 with plt.cbook.get_sample_data('C:/Users/sjjby/Documents/Applied Data Science 1/Assignment 1/map of UK.jpg') as image_file:
@@ -171,6 +176,7 @@ def percentage(x, y):
     '''
     percentage = 100 * float(x)/float(y)
     return str("%.2f" % percentage) + "%"
+    
 '''
 finding the percentage of the columns:
 'England', 'Wales', 'Scotland' and
@@ -219,10 +225,11 @@ for i, txt in enumerate(label):
 axs.axis('off') # clear x-axis and y-axis
 axs.set_title('UK percentage of STEM Students by Country')
 
-
-## COPYING ORIGINAL DATA SET ##
-
-#copy of original data
+'''
+copy of original data (again) 
+to ensure the previous and next 
+figures do not become messed up.
+'''
 university_df2 = university_df.copy()
 print(university_df2.dtypes)
 
@@ -230,9 +237,12 @@ print(university_df2.dtypes)
 university_df2.drop(labels = [13, 25, 26],
                     axis = 0,
                     inplace = True)
+'''             
+printing the new dataframe to ensure changes occurred 
+'''
 print(university_df2)
 
-#add discipline rows into dataframe 
+#add discipline rows into dataframe - for analysis
 stem_vals = ['Stem',
              'Stem',
              'Stem',
@@ -263,11 +273,11 @@ university_df2.insert(loc = 1,
                       column = 'Discipline',
                       value = stem_vals)
 
-#ensuring the new column has been added
+# ensuring the new column has been added
 print(university_df2.dtypes)
 
 
-## FIGURE 3
+# FIGURE 3 - subplot (bar chart, pie chart)
 
 # the total number of stem and non-stem courses offered
 
@@ -278,7 +288,7 @@ labels = ['Non-Stem', 'Stem']
 width = 0.7
 colors = ['cornflowerblue', 'lightblue']
 
-#variables for pie chart
+# variables for pie chart
 students_by_discipline = university_df2.groupby('Discipline')[['Total']].sum()
 explode = [0.1, 0.1]
 
@@ -286,7 +296,6 @@ explode = [0.1, 0.1]
 fig, axs = plt.subplots(nrows = 1, ncols = 2, figsize = (20, 10))
 
 # the data to go onto the axis and figure defined
-
 # bar chart
 axs[0].bar(labels,
            course_type['Total'],
@@ -317,10 +326,10 @@ axs[1].set_title("Total Number of Students studying STEM \n and Non-STEM courses
 
 plt.show()
 
-
-## STACKED BAR CHART - FIGURE 4
-
-    # where students come from to study each discipline
+'''
+STACKED BAR CHART - FIGURE 4
+where students come from to study each discipline
+'''
 
 # define labels 
 UK = (university_df2['England']
@@ -381,14 +390,11 @@ plt.title('The place of origin and the respective number of students attending u
 
 plt.show()
 
+----------------------------------------------------------------------------
+INVESTIGATING GENDER AND STEM
+----------------------------------------------------------------------------
 
-
-
-
-### INVESTIGATING GENDER AND STEM ###
-
-
-## PIE CHARTS - FIGURE 6
+# PIE CHARTS - FIGURE 6 (subplots of them)
 
 # define pie chart variables
 female_students_by_discipline = university_df2.groupby('Discipline')[['Female']].sum()
@@ -453,6 +459,7 @@ H0 = studying stem or non-stem degrees is independant on gender
 H1 = studying stem or non-stem degrees is dependant on gender 
 '''
 
+# importing the required libraries for the statistic tests
 from scipy.stats import chi2
 from scipy.stats import chi2_contingency
 
@@ -492,7 +499,7 @@ else:
     print('not significant result, fail to reject null hypothesis (H0), independent')
 
 
-## HEATMAP - FIGURE 5
+# HEATMAP - FIGURE 5 (for fun)
 
 # importing library for heatmap
 import seaborn as sns
@@ -533,4 +540,4 @@ plt.xlabel("Place of origin")
 plt.xticks(rotation = 90)
 plt.ylabel("Subject of Study")
 
-plt.show
+plt.show()
