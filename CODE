@@ -1,0 +1,303 @@
+### ASSIGNMENT 1 ###
+
+# importing libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# loading the dataset
+university_df = pd.read_csv("C:/Users/sjjby/Documents/Applied Data Science 1/Assignment 1/disciplines.csv")
+
+## DATA PRE-PROCESSING 
+
+# displaying the first 5 lines in the data
+print(university_df.head()) 
+
+# shape of the datta
+print(f'Data contains {university_df.shape[0]} records and {university_df.shape[1]} columns.')
+
+#general statistics on the dataset 
+print(university_df.describe)
+print(university_df.info)
+
+#column names in the data 
+print(f' Data columns = {university_df.columns}')
+
+## observing if any nan values
+print(university_df.isna().sum())
+     #there are no not a number in the data
+
+# deducing the data types 
+print(university_df.dtypes)
+'''
+all the data columns are objects. 
+However, the columns contain numerical values
+Thus, these need changing to int values.
+The values contain commas ',' and these need to be removed as well
+'''
+university_df['Subject of study'] = university_df['Subject of study']
+university_df['England'] = university_df['England'].apply(lambda x: x.replace(",", "")).astype('int')
+university_df['Wales'] = university_df['Wales'].apply(lambda x: x.replace(",", "")).astype('int')
+university_df['Scotland'] = university_df['Scotland'].apply(lambda x: x.replace(",", "")).astype('int')
+university_df['Northern Ireland'] = university_df['Northern Ireland'].apply(lambda x: x.replace(",", "")).astype('int')
+university_df['Other UK'] = university_df['Other UK'].apply(lambda x: x.replace(",", "")).astype('int')
+university_df['Total UK'] = university_df['Total UK'].apply(lambda x: x.replace(",", "")).astype('int')
+university_df['Other European Union'] = university_df['Other European Union'].apply(lambda x: x.replace(",", "")).astype('int')
+university_df['Non-European Union'] = university_df['Non-European Union'].apply(lambda x: x.replace(",", "")).astype('int')
+university_df['Total Non-UK'] = university_df['Total Non-UK'].apply(lambda x: x.replace(",", "")).astype('int')
+university_df['Not known'] = university_df['Not known'].astype('int')
+university_df['Total'] = university_df['Total'].apply(lambda x: x.replace(",", "")).astype('int')
+
+# checking the data types had changed
+print(university_df.dtypes)
+
+
+## adding columns from another data set
+
+gender_df = pd.read_csv("C:/Users/sjjby/Documents/Applied Data Science 1/Assignment 1/female and male.csv")
+
+#add female, male, and other (genders) column to current university data set
+university_df['Female'] = pd.Series(gender_df['Female'])
+university_df['Male'] = pd.Series(gender_df['Male'])
+university_df['Other'] = pd.Series(gender_df['Other'])
+
+# changing the data type
+university_df['Female'] = university_df['Female'].apply(lambda x: x.replace(",", "")).astype('int')
+university_df['Male'] = university_df['Male'].apply(lambda x: x.replace(",", "")).astype('int')
+university_df['Other'] = university_df['Other'].apply(lambda x: x.replace(",", "")).astype('int')
+
+
+
+## COPYING ORIGINAL DATA SET ##
+
+#copy of original data
+university_df2 = university_df.copy()
+print(university_df2.dtypes)
+
+#removing the rows 
+university_df2.drop(labels = [13, 25, 26],
+                    axis = 0,
+                    inplace = True)
+print(university_df2)
+
+#add discipline rows into dataframe 
+stem_vals = ['Stem',
+             'Stem',
+             'Stem',
+             'Stem',
+             'Stem',
+             'Stem',
+             'Stem',
+             'Stem',
+             'Stem',
+             'Stem',
+             'Stem',
+             'Stem',
+             'Stem',
+             'Non-Stem',
+             'Non-Stem',
+             'Non-Stem',
+             'Non-Stem',
+             'Non-Stem',
+             'Non-Stem',
+             'Non-Stem',
+             'Non-Stem',
+             'Non-Stem',
+             'Non-Stem',
+             'Non-Stem']
+
+university_df2.insert(loc = 1,
+                      column = 'Discipline',
+                      value = stem_vals)
+
+#ensuring the new column has been added
+print(university_df2.dtypes)
+
+
+### DATA VISUALISATION ###
+
+## BAR CHART 1
+
+# the total number of stem and non-stem courses offered
+
+# variables
+course_type = university_df2.groupby('Discipline')[['Total']].count()
+print(course_type)
+labels = ['Non-Stem', 'Stem']
+width = 0.7
+colors = ['lightgreen', 'green']
+
+# plot bar chart
+plt.figure(figsize = (10, 10))
+plt.bar(labels,
+        course_type['Total'],
+        width,
+        color = colors)
+
+# title and axis labels
+plt.xlabel('Discipline of courses')
+plt.ylabel('Number of courses')
+plt.title('The total number of STEM and Non-STEM courses offered at university')
+
+plt.show()
+
+
+
+## PIE CHART
+
+# define pie chart variables
+students_by_discipline = university_df2.groupby('Discipline')[['Total']].sum()
+female_students_by_discipline = university_df2.groupby('Discipline')[['Female']].sum()
+male_students_by_discipline = university_df2.groupby('Discipline')[['Male']].sum()
+others_students_by_discipline = university_df2.groupby('Discipline')[['Other']].sum()
+
+# define labels 
+labels = ['Non-Stem', 'Stem']
+explode = [0.1, 0.1]
+
+# make figure and axes
+fig, axs = plt.subplots(2, 2, figsize = (10, 10))
+
+# define pie charts
+axs[0, 0].pie(students_by_discipline['Total'],
+        colors = ['yellow', 'orange'],
+        labels = labels,
+        pctdistance = 0.5,
+        shadow = True,
+        autopct = '%1.1f%%',
+        startangle = 90,
+        explode = explode)
+
+axs[1, 0].pie(female_students_by_discipline['Female'],
+        colors = ['lightpink', 'red'],
+        labels = labels,
+        pctdistance = 0.5,
+        shadow = True,
+        autopct = '%1.1f%%',
+        startangle = 90,
+        explode = explode)
+
+axs[0, 1].pie(male_students_by_discipline['Male'],
+        colors = ['lightblue', 'blue'],
+        labels = labels,
+        pctdistance = 0.5,
+        shadow = True,
+        autopct = '%1.1f%%',
+        startangle = 90,
+        explode = explode)
+
+axs[1, 1].pie(others_students_by_discipline['Other'],
+        colors = ['lightgreen', 'green'],
+        labels = labels,
+        pctdistance = 0.5,
+        shadow = True,
+        autopct = '%1.1f%%',
+        startangle = 90,
+        explode = explode)
+
+# define pie chart titles
+axs[0, 0].set_title("Total")
+axs[1, 0].set_title("Female")
+axs[0, 1].set_title("Male")
+axs[1, 1].set_title("Other")
+
+# showing the pie chart subplots
+plt.show()
+
+
+
+## BAR CHART 2
+
+# subplot of where students come from and the course they study
+
+# define labels
+labels = np.arange(0, len((university_df2['Subject of study']))) 
+england = university_df2['England']
+wales = university_df2['Wales']
+scotland = university_df2['Scotland']
+otheruk = university_df2['Other UK']
+EU = university_df2['Other European Union']
+non_EU = university_df2['Non-European Union']
+total = university_df2['Total']
+width = 0.35    #width of the bars
+
+# subplot layout
+barplot = plt.figure(constrained_layout = True)
+g = barplot.add_gridspec(3,3)
+
+#bar plot 
+barplot_ax1 = barplot.add_subplot(g[0, :])
+barplot_ax1.plot(total, color = 'black',)
+barplot_ax1.set_title('Total')
+
+barplot_ax2 = barplot.add_subplot(g[1,0])
+barplot_ax2.bar(labels, england, color = 'pink')
+barplot_ax2.set_title('England')
+
+barplot_ax3 = barplot.add_subplot(g[1,1])
+barplot_ax3.bar(labels, wales, color = 'red')
+barplot_ax3.set_title('Wales')
+
+barplot_ax4 = barplot.add_subplot(g[1,2])
+barplot_ax4.bar(labels, scotland, color = 'b')
+barplot_ax4.set_title('Scotland')
+
+barplot_ax5 = barplot.add_subplot(g[2,0])
+barplot_ax5.bar(labels, otheruk, color = 'g')
+barplot_ax5.set_title('Other UK')
+
+barplot_ax6 = barplot.add_subplot(g[2,1])
+barplot_ax6.bar(labels, EU, color = 'orange')
+barplot_ax6.set_title('European Union')
+
+barplot_ax7 = barplot.add_subplot(g[2,2])
+barplot_ax7.bar(labels, non_EU, color = 'purple')
+barplot_ax7.set_title('World')
+                      
+
+## HYPOTHESIS TESTING  
+
+'''
+perform a chi-squared test to see if there exists a significant
+difference in the distribution across stem and non-stem disciplines
+and the sexes. 
+
+research question: Are the proportion of males and females equal
+in both stem and non-stem groups?
+
+H0 = studying stem or non-stem degrees is independant on gender
+H1 = studying stem or non-stem degrees is dependant on gender 
+'''
+
+import scipy.stats
+from scipy.stats import chi2
+from scipy.stats import chi2_contingency
+
+# define data values
+data = {'Female': [847685, 593125],
+        'Male': [545210, 542495]}
+
+# define dataframe to apply chi-squared
+df_chi = pd.DataFrame(data,
+                      index = ['Non-Stem', 'Stem'])
+print(df_chi)
+
+# chi-squared test
+stat, p, dof, expected = chi2_contingency(df_chi)
+print(chi2_contingency(df_chi))
+
+prob = 0.95
+critical = chi2.ppf(prob, dof)
+
+if abs(stat) >= critical:
+    print('significant result, reject null hypothesis (H0), dependent.')
+else:
+    print('not significant result, fail to reject null hypothesis (H0), independent.')
+    
+# p-value interpretation 
+alpha = 1 - prob
+
+if p <= alpha:
+    print('significant result, reject null hypothesis (H0), dependent.')
+else:
+    print('not significant result, fail to reject null hypothesis (H0), independent')
