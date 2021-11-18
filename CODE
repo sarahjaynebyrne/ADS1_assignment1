@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # loading the dataset
-university_df = pd.read_csv("C:/Users/sjjby/Documents/Applied Data Science 1/Assignment 1/disciplines.csv")
+university_df = pd.read_csv("https://raw.githubusercontent.com/sarahjaynebyrne/ADS1_assignment1/code/disciplines.csv?token=AWICDHVSEI7QDJ7YXC7QSH3BSZTAO")
 
 ## DATA PRE-PROCESSING 
 
