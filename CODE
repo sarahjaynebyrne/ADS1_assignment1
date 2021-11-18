@@ -82,8 +82,8 @@ gender_df = pd.read_csv("C:/Users/sjjby/Documents/Applied Data Science 1/Assignm
 # running pre-processing function on data
 print(pre_processing(gender_df))
 
-# changing the data type as previously stored as objects using convert function
-gender_df = pd.read_csv("C:/Users/sjjby/Documents/Applied Data Science 1/Assignment 1/female and male.csv",
+# changing the data type as previously stored as objects using convert function to change to float
+gender_df = pd.read_csv("https://raw.githubusercontent.com/sarahjaynebyrne/ADS1_assignment1/code/female%20and%20male.csv?token=AWICDHXPZZXOALPG45MPLKLBSZTPI",
                         converters = {'Female': convert,
                                       'Male': convert,
                                       'Other': convert})
